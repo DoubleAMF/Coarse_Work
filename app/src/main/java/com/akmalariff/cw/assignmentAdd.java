@@ -17,11 +17,12 @@ public class assignmentAdd extends AppCompatActivity {
     }
 
     public String getSubjectIdKey() {
-
+        //Retrieves the SubjectIdKey which was transferred through the intent
         Intent intent = getIntent();
         return (intent.getStringExtra("subjectIdKeyExtra"));
     }
 
+    //This method handles the addition of assignment
     public void addAss(String assName, Float weight, Float grade) {
         SharedPreferences Database = this.getSharedPreferences("Database.akmalariff", 0);
         SharedPreferences.Editor DbEditor = Database.edit();
@@ -30,9 +31,12 @@ public class assignmentAdd extends AppCompatActivity {
         int NumOfAss = Database.getInt(subjectIdKey + "NumOfAss", 0);
         String completeNewEntryKey = subjectIdKey+"A"+String.valueOf(NumOfAss+1);
 
+        //This block creates the prefix keys required to store the data using the database structure designed
         String addNameKey = completeNewEntryKey+"Name";
         String addGradeKey = completeNewEntryKey+"Grade";
         String addWeightKey = completeNewEntryKey+ "Weight";
+
+        //Inserts key-value pairs into the database
         DbEditor.putString(addNameKey, assName);
         DbEditor.putFloat(addWeightKey, weight);
         DbEditor.putFloat(addGradeKey, grade);
@@ -41,6 +45,7 @@ public class assignmentAdd extends AppCompatActivity {
     }
 
 
+    //Actually adds the values required for the assignment by retrieving user input then passing it to the add assignment handler method called addAss
     public void addSubjectActivityConfirmButtonPressed(View view) {
         EditText assName = (EditText) findViewById(R.id.AssignmentAddName);
         EditText assGrade = (EditText) findViewById(R.id.AssignmentAddGrade);

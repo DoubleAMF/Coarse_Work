@@ -14,6 +14,8 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,15 +30,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DecimalFormat onedec = new DecimalFormat("0.#");
+        //Instantiating decimal formatter for one decimal place
+        DecimalFormat onedec = new DecimalFormat("0.0");
 
+        /*Instantiates "Database" created using SharedPreferences.
+        * The name of each Key is formatted to simulate a branched tree mapping
+        * Important Keys:
+        * NumOfSubs is the total number of subjects
+        * S#Name = Name of subject number #
+        * S#A#Name = Name of assignment # in subject #
+        * S#A#Item = same form where Item can be "Weight", "Grade"
+        * S#NumOfAss = Number of assignments in Subject number #*/
         SharedPreferences Database = this.getSharedPreferences("Database.akmalariff", 0);
+
+        //Retrieve total number of Subjects
         NumOfSubs = Database.getInt("NumOfSubs", 0);
 
+        //Instantiation
         ListView subsList = (ListView) findViewById(R.id.subsList);
 
-
-        actualSubsList = new ArrayList<>(Arrays.asList("Subject...")); //Dummy Subject
+        //This bulk of code instantiates elements of an ArrayList by searching and adding each subject entry that does not exceed the maximum number of subjects
+        actualSubsList = new ArrayList<>(Arrays.asList("Refresh")); //Dummy Subject
         for (int i = 1; i <= NumOfSubs; i++) {
 
             String subjectName = Database.getString("S" + i + "Name", "Not found");
@@ -44,8 +58,11 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Subject", subjectName);
         }
 
+        //Instantiates TargetMessage with default message
         String TargetMessage = "Default";
-        ArrayList<String> subsListWithReq =  new ArrayList<>(Arrays.asList("Subject\nRequired Average Future Grade")); //Dummy Again
+
+        //Instantiates an new ArrayList with required additional info about the required grade message using if clause
+        final ArrayList<String> subsListWithReq =  new ArrayList<>(Arrays.asList("Subject\nRequired Average Future Grade")); //Dummy Again
         for (int i = 1; i <= NumOfSubs; i++) {
 
             if(requiredGrade(i)<0)
@@ -65,19 +82,25 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Subject", subjectName);
         }
 
+        //Setting up the Array adapter which receives the ArrayList with required grade info
         ArrayAdapter<String> ArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, subsListWithReq);
         subsList.setAdapter(ArrayAdapter);
         subsList.setTextFilterEnabled(true);
+
+        //Refreshes List
         ArrayAdapter.notifyDataSetChanged();
 
+        //Set item click action which include intent
         subsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent addAssignment = new Intent(MainActivity.this, assList.class);
+                Log.d("SubjectClickPosition", String.valueOf(position));
                 String whichSub = actualSubsList.get(position).toString();
                 addAssignment.putExtra("WhichSub", whichSub);
                 Log.d("WhichSub: ", whichSub);
                 startActivity(addAssignment);
+
             }
         });
 
@@ -87,15 +110,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        DecimalFormat onedec = new DecimalFormat("0.#");
+        //The whole onResume() method is exactly the same as the onCreate() method to ensure consistency
+        //Instantiating decimal formatter for one decimal place
+        DecimalFormat onedec = new DecimalFormat("0.0");
 
+        /*Instantiates "Database" created using SharedPreferences.
+        * The name of each Key is formatted to simulate a branched tree mapping
+        * Important Keys:
+        * NumOfSubs is the total number of subjects
+        * S#Name = Name of subject number #
+        * S#A#Name = Name of assignment # in subject #
+        * S#A#Item = same form where Item can be "Weight", "Grade"
+        * S#NumOfAss = Number of assignments in Subject number #*/
         SharedPreferences Database = this.getSharedPreferences("Database.akmalariff", 0);
+
+        //Retrieve total number of Subjects
         NumOfSubs = Database.getInt("NumOfSubs", 0);
 
+        //Instantiation
         ListView subsList = (ListView) findViewById(R.id.subsList);
 
-
-        actualSubsList = new ArrayList<>(Arrays.asList("Subject...")); //Dummy Subject
+        //This bulk of code instantiates elements of an ArrayList by searching and adding each subject entry that does not exceed the maximum number of subjects
+        actualSubsList = new ArrayList<>(Arrays.asList("Refresh")); //Dummy Subject
         for (int i = 1; i <= NumOfSubs; i++) {
 
             String subjectName = Database.getString("S" + i + "Name", "Not found");
@@ -103,8 +139,11 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Subject", subjectName);
         }
 
+        //Instantiates TargetMessage with default message
         String TargetMessage = "Default";
-        ArrayList<String> subsListWithReq =  new ArrayList<>(Arrays.asList("Subject\nRequired Average Future Grade")); //Dummy Again
+
+        //Instantiates an new ArrayList with required additional info about the required grade message using if clause
+        final ArrayList<String> subsListWithReq =  new ArrayList<>(Arrays.asList("Subject\nRequired Average Future Grade")); //Dummy Again
         for (int i = 1; i <= NumOfSubs; i++) {
 
             if(requiredGrade(i)<0)
@@ -124,24 +163,32 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Subject", subjectName);
         }
 
+        //Setting up the Array adapter which receives the ArrayList with required grade info
         ArrayAdapter<String> ArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, subsListWithReq);
         subsList.setAdapter(ArrayAdapter);
         subsList.setTextFilterEnabled(true);
+
+        //Refreshes List
         ArrayAdapter.notifyDataSetChanged();
 
+        //Set item click action which include intent
         subsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent addAssignment = new Intent(MainActivity.this, assList.class);
+                Log.d("SubjectClickPosition", String.valueOf(position));
                 String whichSub = actualSubsList.get(position).toString();
                 addAssignment.putExtra("WhichSub", whichSub);
                 Log.d("WhichSub: ", whichSub);
                 startActivity(addAssignment);
+
             }
         });
 
     }
 
+
+    //Method which handles the entry of a new Subject. Note required in final app, however useful for debugging
     public void addSubject(String subject, Float weight) {
         SharedPreferences Database = this.getSharedPreferences("Database.akmalariff", 0);
         SharedPreferences.Editor DbEditor = Database.edit();
@@ -155,11 +202,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    //Event handler method for add subject button
     public void addSubjectPressed(View view) {
         Intent addSubs = new Intent(this, subjectAdd.class);
         startActivity(addSubs);
     }
 
+    //Event handler method for clear data
     public void clearData(View view) {
         SharedPreferences Database = this.getSharedPreferences("Database.akmalariff", 0);
         SharedPreferences.Editor DbEditor = Database.edit();
@@ -167,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
         DbEditor.commit();
     }
 
+    //Method which calculates the required grade
     public double requiredGrade(int subjectNum)
     {
         SharedPreferences Database = this.getSharedPreferences("Database.akmalariff", 0);
@@ -183,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
             sumOfGradesTimesWeight += grade*weight;
         }
 
+        //The Targetflag indicates whether user is looking to get a first trying to pass the module
         Boolean Targetflag = Database.getBoolean(subjectIdKey+"First", true);
         Target = (Targetflag==true?0.7:0.4);
 
@@ -192,7 +243,5 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Required", String.valueOf(required));
         return required;
     }
-
-
 
 }

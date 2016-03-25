@@ -23,17 +23,21 @@ public class assList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ass_list);
-        
+
+        //Instantiates the prefix to look up assignment data called subjectIdKey
         String subjectIdKey = getSubjectIdKey();
         Log.d("subjectIdKey", subjectIdKey);
 
+        //Instantiates the database to enable reading from it
         SharedPreferences Database = this.getSharedPreferences("Database.akmalariff", 0);
+
+        //Getting total number of assignments from database
         NumOfAss = Database.getInt(subjectIdKey+"NumOfAss", 0);
         Log.d("NumOfAss", String.valueOf(NumOfAss));
 
         ListView subsList = (ListView) findViewById(R.id.assList);
 
-
+        //ArrayList which holds names of the assignments assigned by searching the database for matching prefix key and incremental assignment
         actualAssList = new ArrayList<>(Arrays.asList("   ")); //Dummy Subject
         for (int i = 1; i <= NumOfAss; i++) {
 
@@ -42,9 +46,12 @@ public class assList extends AppCompatActivity {
             Log.d("AssName", assName);
         }
 
+        //Sets an arrayadapter to accept the name array and display it as a list
         ArrayAdapter<String> ArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, actualAssList);
         subsList.setAdapter(ArrayAdapter);
         subsList.setTextFilterEnabled(true);
+
+        //updates list
         ArrayAdapter.notifyDataSetChanged();
 
     }
@@ -53,6 +60,8 @@ public class assList extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+
+        // The onResume() method is exactly the same as the onCreate() method
         String subjectIdKey = getSubjectIdKey();
         Log.d("subjectIdKey", subjectIdKey);
 
@@ -101,6 +110,7 @@ public class assList extends AppCompatActivity {
         return subjectIdKey;
     }
 
+    //Event handler method for add assignment button pressed. Creates an intent which bring up the form Activity called assignmentAdd.class
     public void addAssPressed(View view) {
         Intent addAss = new Intent(assList.this, assignmentAdd.class);
         String subjectIdKeyExtra = getSubjectIdKey();
@@ -108,6 +118,7 @@ public class assList extends AppCompatActivity {
         startActivity(addAss);
     }
 
+    //Event Handler which sets the target to passing the module
     public void getPass(View view) {
         SharedPreferences Database = this.getSharedPreferences("Database.akmalariff", 0);
         SharedPreferences.Editor DbEditor = Database.edit();
@@ -118,6 +129,7 @@ public class assList extends AppCompatActivity {
         finish();
     }
 
+    //Event handler which sets the target to getting a first in the module
     public void getFirst(View view) {
         SharedPreferences Database = this.getSharedPreferences("Database.akmalariff", 0);
         SharedPreferences.Editor DbEditor = Database.edit();
